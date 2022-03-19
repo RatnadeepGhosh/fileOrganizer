@@ -1,3 +1,4 @@
+const { log } = require("console");
 const fs = require("fs"); //fs module
 const path = require("path"); //path module
 let types = {
@@ -60,16 +61,39 @@ for (let i = 0; i < allFiles.length; i++){
 
 function getFolderName(ext) {
     //magic
-    
-    return folderName;
+    for (let key in types) {
+        // console.log(key);
+        for (let i = 0; i < types[key].length; i++) {
+          if (types[key][i] == ext) {
+            return key;
+          }
+        }
+      }
+      return "miscellaneous" // Edge case when file extension is out of box
   }
   
   function copyFileToDest(srcPath, fullPathOfFile, folderName) {
-   
-    //magic
+   //1. folderName ka path banana h
+  let destFolderPath = path.join(srcPath, "organized_files", folderName); //....../downloads/organized_files/archives
+  // console.log(des);
+  //2 check folder if exists, if it does not, then make folder
+
+  if (!fs.existsSync(destFolderPath)) {
+    fs.mkdirSync(destFolderPath);
+  }
+  //3. copy file from src folder to dest folder
+
+  // Returns the last portion of a path
+  let fileName = path.basename(fullPathOfFile); //abc.zip
+  let destFileName = path.join(destFolderPath, fileName);    
+                      // src        destination
+  fs.copyFileSync(fullPathOfFile, destFileName);
+  //magic
   }
   
+// let srcPath="F://FJP-5//fileOrganizer//downloads"
+// organize(srcPath);
 
-
-let srcPath="F:\FJP-5\fileOrganizer\downloads"
-organize(srcPath);
+module.exports = {
+  organize:organize
+}
